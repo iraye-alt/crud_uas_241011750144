@@ -1,0 +1,188 @@
+@extends('layouts.app')
+
+@section('title', 'Tambah Atlet — SportData Hub')
+
+@section('content')
+
+    <section class="py-10">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Back Button --}}
+            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-indigo-400 transition-colors mb-6 animate-fade-in">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+
+            {{-- Form Card --}}
+            <div class="glass-card rounded-2xl overflow-hidden animate-fade-in-up">
+
+                {{-- Header --}}
+                <div class="px-6 sm:px-8 py-6 border-b border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-white">Tambah Atlet Baru</h1>
+                            <p class="text-sm text-slate-400">Isi form untuk menambahkan data atlet baru</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Form --}}
+                <form method="POST" action="{{ route('admin.pemain.store') }}" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-6">
+                    @csrf
+
+                    {{-- Gambar Upload --}}
+                    <div>
+                        <label for="gambar" class="block text-sm font-medium text-slate-300 mb-2">
+                            Foto Atlet <span class="text-red-400">*</span>
+                        </label>
+                        <div class="flex items-start gap-4">
+                            <div id="imagePreviewContainer"
+                                 class="w-24 h-24 rounded-xl bg-slate-800 border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                                <svg id="placeholderIcon" class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <img id="imagePreview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                            </div>
+                            <div class="flex-1">
+                                <input type="file"
+                                       id="gambar"
+                                       name="gambar"
+                                       accept="image/*"
+                                       onchange="previewImage(this)"
+                                       class="w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600/20 file:text-indigo-400 hover:file:bg-indigo-600/30 file:cursor-pointer cursor-pointer file:transition-all">
+                                <p class="mt-2 text-xs text-slate-500">Format: JPEG, PNG, JPG, GIF, WebP. Maks: 2MB</p>
+                            </div>
+                        </div>
+                        @error('gambar')
+                            <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Nama Pemain --}}
+                    <div>
+                        <label for="nama_pemain" class="block text-sm font-medium text-slate-300 mb-2">
+                            Nama Lengkap Atlet <span class="text-red-400">*</span>
+                        </label>
+                        <input type="text"
+                               id="nama_pemain"
+                               name="nama_pemain"
+                               value="{{ old('nama_pemain') }}"
+                               placeholder="Masukkan nama lengkap atlet"
+                               class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                        @error('nama_pemain')
+                            <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Cabang Olahraga & Klub --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="cabang_olahraga" class="block text-sm font-medium text-slate-300 mb-2">
+                                Cabang Olahraga <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text"
+                                   id="cabang_olahraga"
+                                   name="cabang_olahraga"
+                                   value="{{ old('cabang_olahraga') }}"
+                                   placeholder="cth: Sepak Bola"
+                                   class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                            @error('cabang_olahraga')
+                                <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="klub" class="block text-sm font-medium text-slate-300 mb-2">
+                                Klub <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text"
+                                   id="klub"
+                                   name="klub"
+                                   value="{{ old('klub') }}"
+                                   placeholder="cth: Barcelona FC"
+                                   class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                            @error('klub')
+                                <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Usia --}}
+                    <div class="max-w-xs">
+                        <label for="usia" class="block text-sm font-medium text-slate-300 mb-2">
+                            Usia <span class="text-red-400">*</span>
+                        </label>
+                        <input type="number"
+                               id="usia"
+                               name="usia"
+                               value="{{ old('usia') }}"
+                               min="1"
+                               max="100"
+                               placeholder="cth: 25"
+                               class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                        @error('usia')
+                            <p class="mt-2 text-sm text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="flex items-center gap-3 pt-4 border-t border-white/5">
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:from-indigo-500 hover:to-purple-500 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Simpan Data
+                        </button>
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="px-6 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 transition-all">
+                            Batal
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const placeholder = document.getElementById('placeholderIcon');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+@endsection
