@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Atlet — SportData Hub')
+@section('title', 'Edit Atlet — ChampVault')
 
 @section('content')
 
